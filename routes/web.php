@@ -70,6 +70,7 @@ Route::middleware(['auth', 'role:mahasiswa'])->prefix('mahasiswa')->name('mahasi
     Route::get('/krs', [MahasiswaKrs::class, 'index'])->name('krs.index');
     Route::get('/presensi', [MahasiswaPresensi::class, 'index'])->name('presensi.index');
     Route::get('/presensi/create/{jadwalId}', [MahasiswaPresensi::class, 'create'])->name('presensi.create');
+    Route::get('/presensi/{kode_mk}', [MahasiswaPresensi::class, 'show'])->name('presensi.show');
     Route::post('/presensi/store', [MahasiswaPresensi::class, 'store'])->name('presensi.store');
 });
 

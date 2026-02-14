@@ -24,37 +24,53 @@
                         AKADEMIK</span>
                 </a>
             </div>
-            <div class="flex items-center">
-                <div class="flex items-center ms-3">
+            <div class="flex items-center gap-2">
+                
+                <div class="flex items-center ms-1">
                     <div>
                         <button type="button"
-                            class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300"
+                            class="flex items-center gap-2 text-sm bg-gray-50 rounded-lg pl-1 pr-3 py-1.5 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200"
                             aria-expanded="false" data-dropdown-toggle="dropdown-user">
                             <span class="sr-only">Open user menu</span>
                             <img class="w-8 h-8 rounded-full"
-                                src="https://ui-avatars.com/api/?name={{ auth()->user()->name }}&background=2563eb&color=fff"
+                                src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=2563eb&color=fff"
                                 alt="user photo">
+                            <div class="hidden md:block text-left">
+                                <p class="text-sm font-semibold text-gray-900 leading-tight">
+                                    {{ auth()->user()->role === 'dosen' ? (auth()->user()->dosen?->Nama ?? auth()->user()->name) : auth()->user()->name }}
+                                </p>
+                                <p class="text-xs text-gray-500 leading-tight">
+                                    @if(auth()->user()->role === 'dosen')
+                                        NIP: {{ auth()->user()->dosen?->NIP ?? '-' }}
+                                    @else
+                                        {{ ucfirst(auth()->user()->role) }}
+                                    @endif
+                                </p>
+                            </div>
                         </button>
                     </div>
-                    <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow"
+                    <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow border border-gray-200"
                         id="dropdown-user">
                         <div class="px-4 py-3" role="none">
-                            <p class="text-sm text-gray-900" role="none">
-                                {{ auth()->user()->name }}
+                            <p class="text-xs font-medium text-gray-500" role="none">Nama lengkap</p>
+                            <p class="text-sm font-semibold text-gray-900" role="none">
+                                {{ auth()->user()->role === 'dosen' ? (auth()->user()->dosen?->Nama ?? auth()->user()->name) : auth()->user()->name }}
                             </p>
-                            <p class="text-sm font-medium text-gray-900 truncate" role="none">
-                                {{ auth()->user()->email }}
-                            </p>
+                            @if(auth()->user()->role === 'dosen')
+                                <p class="text-xs font-medium text-gray-500 mt-1" role="none">NIP</p>
+                                <p class="text-sm text-gray-900 font-mono" role="none">{{ auth()->user()->dosen?->NIP ?? '-' }}</p>
+                            @endif
+                            <p class="text-xs font-medium text-gray-500 mt-1" role="none">Email</p>
+                            <p class="text-sm text-gray-900 truncate" role="none">{{ auth()->user()->email }}</p>
                             <p class="text-xs text-gray-500 mt-1" role="none">
-                                <span
-                                    class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
                                     {{ ucfirst(auth()->user()->role) }}
                                 </span>
                             </p>
                         </div>
                         <ul class="py-1" role="none">
                             <li>
-                                <a href="#"
+                                <a href="{{ auth()->user()->role === 'admin' ? route('admin.dashboard') : route('dosen.dashboard') }}"
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
                                     <svg class="w-4 h-4 inline-block me-2" aria-hidden="true"
                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
@@ -70,7 +86,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#"
+                                <a href="{{ route('profile.edit') }}"
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
                                     <svg class="w-4 h-4 inline-block me-2" aria-hidden="true"
                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
@@ -81,7 +97,7 @@
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                             stroke-width="2" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
                                     </svg>
-                                    Settings
+                                    Profile / Pengaturan
                                 </a>
                             </li>
                             <li>

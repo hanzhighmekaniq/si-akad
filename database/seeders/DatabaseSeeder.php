@@ -17,16 +17,16 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
-            // GolonganSeeder::class,
-            // MatakuliahSeeder::class,
-            // RuangSeeder::class,
-            // DosenSeeder::class,
-            // MahasiswaSeeder::class,
-            // PengampuSeeder::class,
-            // JadwalAkademikSeeder::class,
-            // KrsSeeder::class,
-            // PresensiAkademikSeeder::class,
-            // SetupTodayScheduleSeeder::class,
+            GolonganSeeder::class,
+            MatakuliahSeeder::class,
+            RuangSeeder::class,
+            DosenSeeder::class,
+            MahasiswaSeeder::class,
+            PengampuSeeder::class,
+            JadwalAkademikSeeder::class,
+            KrsSeeder::class,
+            PresensiAkademikSeeder::class,
+            SetupTodayScheduleSeeder::class,
         ]);
     }
 }

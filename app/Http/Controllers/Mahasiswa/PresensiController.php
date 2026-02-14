@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Mahasiswa;
 use App\Models\PresensiAkademik;
 use App\Models\JadwalAkademik;
+use App\Models\Krs;
 use Carbon\Carbon;
 
 class PresensiController extends Controller
@@ -20,60 +21,89 @@ class PresensiController extends Controller
             return redirect()->route('mahasiswa.dashboard')->with('error', 'Data profil mahasiswa belum diisi. Silakan hubungi administrator.');
         }
 
-        // Get all presensi records
+        // Daftar matakuliah dari KRS (yang diambil mahasiswa)
+        $daftarMatkul = Krs::where('NIM', $mahasiswa->NIM)
+            ->with('matakuliah')
+            ->get()
+            ->unique('Kode_mk')
+            ->values();
+
+        // Semua presensi untuk statistik
         $presensi = PresensiAkademik::where('NIM', $mahasiswa->NIM)
             ->with('matakuliah')
             ->orderBy('tanggal', 'desc')
             ->orderBy('hari')
             ->get();
 
-        // Group by month for better display
-        $presensiByMonth = $presensi->groupBy(function($item) {
-            return Carbon::parse($item->tanggal)->format('Y-m');
-        });
+        // Presensi seminggu terakhir (7 hari)
+        $mulaiSeminggu = Carbon::now()->subDays(7)->startOfDay();
+        $presensiSemingguTerakhir = PresensiAkademik::where('NIM', $mahasiswa->NIM)
+            ->where('tanggal', '>=', $mulaiSeminggu)
+            ->with('matakuliah')
+            ->orderBy('tanggal', 'desc')
+            ->orderBy('Kode_mk')
+            ->get();
 
         // Calculate statistics
         $totalPresensi = $presensi->count();
         $hadir = $presensi->where('status_kehadiran', 'Hadir')->count();
         $izin = $presensi->where('status_kehadiran', 'Izin')->count();
         $alpa = $presensi->where('status_kehadiran', 'Alpa')->count();
-
-        // Calculate attendance percentage
         $persentaseKehadiran = $totalPresensi > 0 ? round(($hadir / $totalPresensi) * 100, 2) : 0;
-
-        // Get today's schedule to check for pending attendance
-        $today = Carbon::now();
-        $hariIni = $this->getDayName($today->dayOfWeek);
-
-        $jadwalHariIni = JadwalAkademik::where('id_Gol', $mahasiswa->id_Gol)
-            ->where('hari', $hariIni)
-            ->with(['matakuliah', 'ruang'])
-            ->orderBy('jam_mulai')
-            ->get();
-
-        // Check which classes have attendance records for today
-        $presensiHariIni = PresensiAkademik::where('NIM', $mahasiswa->NIM)
-            ->where('tanggal', $today->format('Y-m-d'))
-            ->pluck('Kode_mk')
-            ->toArray();
-
-        // Filter classes that don't have attendance yet
-        $belumAbsen = $jadwalHariIni->filter(function($jadwal) use ($presensiHariIni) {
-            return !in_array($jadwal->Kode_mk, $presensiHariIni);
-        });
 
         return view('management.mahasiswa.presensi.index', [
             'mahasiswa' => $mahasiswa,
-            'presensi' => $presensi,
-            'presensiByMonth' => $presensiByMonth,
+            'daftarMatkul' => $daftarMatkul,
+            'presensiSemingguTerakhir' => $presensiSemingguTerakhir,
             'totalPresensi' => $totalPresensi,
             'hadir' => $hadir,
             'izin' => $izin,
             'alpa' => $alpa,
             'persentaseKehadiran' => $persentaseKehadiran,
-            'jadwalHariIni' => $jadwalHariIni,
-            'belumAbsen' => $belumAbsen,
-            'hariIni' => $hariIni,
+        ]);
+    }
+
+    /**
+     * Tampilkan daftar presensi per mata kuliah
+     */
+    public function show(string $kode_mk)
+    {
+        $mahasiswa = Mahasiswa::where('user_id', Auth::id())->first();
+
+        if (!$mahasiswa) {
+            return redirect()->route('mahasiswa.dashboard')->with('error', 'Data profil mahasiswa belum diisi.');
+        }
+
+        // Pastikan matkul ini ada di KRS mahasiswa
+        $krs = Krs::where('NIM', $mahasiswa->NIM)
+            ->where('Kode_mk', $kode_mk)
+            ->with('matakuliah')
+            ->first();
+
+        if (!$krs) {
+            return redirect()->route('mahasiswa.presensi.index')
+                ->with('error', 'Mata kuliah tidak ditemukan atau tidak ada di KRS Anda.');
+        }
+
+        $matakuliah = $krs->matakuliah;
+
+        // Daftar presensi untuk matkul ini
+        $presensi = PresensiAkademik::where('NIM', $mahasiswa->NIM)
+            ->where('Kode_mk', $kode_mk)
+            ->orderBy('tanggal', 'desc')
+            ->get();
+
+        // Presensi seminggu terakhir untuk matkul ini
+        $mulaiSeminggu = Carbon::now()->subDays(7)->startOfDay();
+        $presensiSemingguTerakhir = $presensi->filter(function ($p) use ($mulaiSeminggu) {
+            return $p->tanggal && $p->tanggal->gte($mulaiSeminggu);
+        })->values();
+
+        return view('management.mahasiswa.presensi.show', [
+            'mahasiswa' => $mahasiswa,
+            'matakuliah' => $matakuliah,
+            'presensi' => $presensi,
+            'presensiSemingguTerakhir' => $presensiSemingguTerakhir,
         ]);
     }
 

@@ -14,6 +14,103 @@
         @endif
     </div>
 
+    @if($dosen)
+    <!-- Jadwal Hari Ini & Besok -->
+    <div class="grid grid-cols-1 gap-6 mb-6 lg:grid-cols-2">
+        <!-- Jadwal Hari Ini -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="p-4 {{ $jadwalHariIni->count() > 0 ? 'bg-blue-50 border-b border-blue-100' : 'bg-gray-50 border-b border-gray-200' }}">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center justify-center w-10 h-10 rounded-lg {{ $jadwalHariIni->count() > 0 ? 'bg-blue-100' : 'bg-gray-200' }}">
+                            <svg class="w-5 h-5 {{ $jadwalHariIni->count() > 0 ? 'text-blue-600' : 'text-gray-500' }}" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">Jadwal Hari Ini</h3>
+                            <p class="text-sm text-gray-600">{{ $hariIni }}, {{ $today->translatedFormat('d F Y') }}</p>
+                        </div>
+                    </div>
+                    <span class="inline-flex items-center px-3 py-1 rounded-lg text-sm font-semibold {{ $jadwalHariIni->count() > 0 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700' }}">
+                        {{ $jadwalHariIni->count() }} jadwal
+                    </span>
+                </div>
+            </div>
+            <div class="p-4 max-h-64 overflow-y-auto">
+                @if($jadwalHariIni->count() > 0)
+                    <ul class="space-y-3">
+                        @foreach($jadwalHariIni as $j)
+                            <li class="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-semibold text-gray-900 truncate">{{ $j->matakuliah->Nama_mk }}</p>
+                                    <p class="text-xs text-gray-500">{{ $j->jam_mulai }}–{{ $j->jam_selesai }} · {{ $j->ruang->nama_ruang }} · {{ $j->golongan->nama_Gol }}</p>
+                                </div>
+                                <a href="{{ route('dosen.presensi.create', $j->id) }}" class="ml-2 flex-shrink-0 inline-flex items-center px-2.5 py-1.5 text-xs font-medium rounded-lg bg-green-600 text-white hover:bg-green-700">Presensi</a>
+                            </li>
+                        @endforeach
+                    </ul>
+                    <a href="{{ route('dosen.jadwal.index') }}?hari={{ urlencode($hariIni) }}" class="mt-3 block text-center text-sm font-medium text-blue-600 hover:text-blue-800">Lihat semua jadwal →</a>
+                @else
+                    <div class="text-center py-8">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <p class="mt-2 text-sm font-medium text-gray-900">Tidak ada jadwal mengajar hari ini</p>
+                        <p class="text-xs text-gray-500">Nikmati hari bebas mengajar atau cek jadwal besok di samping.</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <!-- Jadwal Besok -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="p-4 {{ $jadwalBesok->count() > 0 ? 'bg-emerald-50 border-b border-emerald-100' : 'bg-gray-50 border-b border-gray-200' }}">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center justify-center w-10 h-10 rounded-lg {{ $jadwalBesok->count() > 0 ? 'bg-emerald-100' : 'bg-gray-200' }}">
+                            <svg class="w-5 h-5 {{ $jadwalBesok->count() > 0 ? 'text-emerald-600' : 'text-gray-500' }}" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">Jadwal Besok</h3>
+                            <p class="text-sm text-gray-600">{{ $besok }}, {{ $today->copy()->addDay()->translatedFormat('d F Y') }}</p>
+                        </div>
+                    </div>
+                    <span class="inline-flex items-center px-3 py-1 rounded-lg text-sm font-semibold {{ $jadwalBesok->count() > 0 ? 'bg-emerald-600 text-white' : 'bg-gray-200 text-gray-700' }}">
+                        {{ $jadwalBesok->count() }} jadwal
+                    </span>
+                </div>
+            </div>
+            <div class="p-4 max-h-64 overflow-y-auto">
+                @if($jadwalBesok->count() > 0)
+                    <ul class="space-y-3">
+                        @foreach($jadwalBesok as $j)
+                            <li class="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-semibold text-gray-900 truncate">{{ $j->matakuliah->Nama_mk }}</p>
+                                    <p class="text-xs text-gray-500">{{ $j->jam_mulai }}–{{ $j->jam_selesai }} · {{ $j->ruang->nama_ruang }} · {{ $j->golongan->nama_Gol }}</p>
+                                </div>
+                                <a href="{{ route('dosen.jadwal.show', $j->id) }}" class="ml-2 flex-shrink-0 inline-flex items-center px-2.5 py-1.5 text-xs font-medium rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300">Detail</a>
+                            </li>
+                        @endforeach
+                    </ul>
+                    <a href="{{ route('dosen.jadwal.index') }}?hari={{ urlencode($besok) }}" class="mt-3 block text-center text-sm font-medium text-emerald-600 hover:text-emerald-800">Lihat jadwal besok →</a>
+                @else
+                    <div class="text-center py-8">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <p class="mt-2 text-sm font-medium text-gray-900">Tidak ada jadwal besok</p>
+                        <p class="text-xs text-gray-500">Lihat jadwal minggu ini di bawah untuk rencana ke depan.</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-3">
         <!-- Total Mata Kuliah -->
@@ -105,10 +202,21 @@
             </div>
         </div>
 
-        <!-- Jadwal Mengajar -->
+        <!-- Jadwal Mengajar (semua / filter per hari) -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
                 <h3 class="text-lg font-semibold text-gray-900">Jadwal Mengajar</h3>
+                @if($dosen && $jadwalMingguIni->count() > 0)
+                    <div class="flex flex-wrap gap-1">
+                        @foreach($jadwalMingguIni->keys() as $hari)
+                            <a href="{{ route('dosen.jadwal.index') }}?hari={{ urlencode($hari) }}"
+                                class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-lg {{ $hari === $hariIni ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                                {{ $hari }}
+                                <span class="ml-1 opacity-80">({{ $jadwalMingguIni[$hari]->count() }})</span>
+                            </a>
+                        @endforeach
+                    </div>
+                @endif
             </div>
             <div class="space-y-3 max-h-96 overflow-y-auto">
                 @forelse($jadwalMengajar as $jadwal)
@@ -157,6 +265,11 @@
                     <p class="text-sm text-gray-500 text-center py-4">Belum ada jadwal mengajar</p>
                 @endforelse
             </div>
+            @if($dosen && $jadwalMengajar->count() > 0)
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <a href="{{ route('dosen.jadwal.index') }}" class="text-sm font-medium text-blue-600 hover:text-blue-800">Lihat semua jadwal & presensi →</a>
+                </div>
+            @endif
         </div>
     </div>
 
@@ -164,8 +277,8 @@
     <div class="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <a href="#"
-                class="flex items-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition group">
+            <a href="{{ $dosen ? route('dosen.presensi.index') : '#' }}"
+                class="flex items-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition group {{ !$dosen ? 'opacity-60 pointer-events-none' : '' }}">
                 <div
                     class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition">
                     <svg class="w-5 h-5 text-blue-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
@@ -175,20 +288,21 @@
                             clip-rule="evenodd" />
                     </svg>
                 </div>
-                <span class="ml-3 text-sm font-medium text-gray-900">Input Presensi</span>
+                <span class="ml-3 text-sm font-medium text-gray-900">Presensi</span>
             </a>
 
-            <a href="#"
-                class="flex items-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition group">
+            <a href="{{ $dosen ? route('dosen.jadwal.index') : '#' }}"
+                class="flex items-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition group {{ !$dosen ? 'opacity-60 pointer-events-none' : '' }}">
                 <div
                     class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition">
                     <svg class="w-5 h-5 text-green-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                        fill="currentColor" viewBox="0 0 20 18">
-                        <path
-                            d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
+                        fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd"
+                            d="M5 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11.5c.07 0 .14-.007.207-.021.095.014.193.021.293.021h2a2 2 0 0 0 2-2V7a1 1 0 0 0-1-1h-1a1 1 0 1 0 0 2v11h-2V5a2 2 0 0 0-2-2H5Zm7 4a1 1 0 0 1 1-1h.5a1 1 0 1 1 0 2H13a1 1 0 0 1-1-1Zm0 3a1 1 0 0 1 1-1h.5a1 1 0 1 1 0 2H13a1 1 0 0 1-1-1Zm-6 4a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H7a1 1 0 0 1-1-1Zm0 3a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H7a1 1 0 0 1-1-1ZM7 6a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H7Zm1 3V8h1v1H8Z"
+                            clip-rule="evenodd" />
                     </svg>
                 </div>
-                <span class="ml-3 text-sm font-medium text-gray-900">Daftar Mahasiswa</span>
+                <span class="ml-3 text-sm font-medium text-gray-900">Jadwal Mengajar</span>
             </a>
 
             <a href="#"

@@ -31,6 +31,15 @@
                 </a>
             </div>
             <div class="flex items-center gap-3">
+                <!-- Profile / Pengaturan -->
+                <a href="{{ route('profile.edit') }}"
+                    class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 focus:ring-2 focus:ring-gray-200">
+                    <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="hidden sm:inline">Profile</span>
+                </a>
+
                 <!-- Quick Stats Badge -->
                 <div class="hidden md:flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-lg">
                     <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
@@ -48,11 +57,11 @@
                         data-dropdown-placement="bottom">
                         <span class="sr-only">Open user menu</span>
                         <div class="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center font-bold text-white text-lg">
-                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                            {{ strtoupper(substr(auth()->user()->mahasiswa?->Nama ?? auth()->user()->name, 0, 1)) }}
                         </div>
                         <div class="hidden md:block text-left">
-                            <p class="text-sm font-semibold text-gray-900">{{ auth()->user()->name }}</p>
-                            <p class="text-xs text-gray-500">{{ auth()->user()->mahasiswa?->NIM ?? 'Mahasiswa' }}</p>
+                            <p class="text-sm font-semibold text-gray-900">{{ auth()->user()->mahasiswa?->Nama ?? auth()->user()->name }}</p>
+                            <p class="text-xs text-gray-500">NIM: {{ auth()->user()->mahasiswa?->NIM ?? '-' }}</p>
                         </div>
                     </button>
 
@@ -60,11 +69,11 @@
                     <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-lg border border-gray-200"
                         id="user-dropdown">
                         <div class="px-4 py-3">
-                            <span class="block text-sm font-semibold text-gray-900">{{ auth()->user()->name }}</span>
-                            <span class="block text-xs text-gray-600 truncate">{{ auth()->user()->email }}</span>
-                            <span class="inline-block mt-1 px-2 py-0.5 text-xs font-medium text-blue-700 bg-blue-50 rounded">
-                                {{ auth()->user()->mahasiswa?->NIM ?? 'Mahasiswa' }}
-                            </span>
+                            <p class="text-xs font-medium text-gray-500">Nama lengkap</p>
+                            <span class="block text-sm font-semibold text-gray-900">{{ auth()->user()->mahasiswa?->Nama ?? auth()->user()->name }}</span>
+                            <p class="text-xs font-medium text-gray-500 mt-2">NIM</p>
+                            <span class="block text-sm font-mono text-gray-900">{{ auth()->user()->mahasiswa?->NIM ?? '-' }}</span>
+                            <span class="block text-xs text-gray-600 truncate mt-1">{{ auth()->user()->email }}</span>
                         </div>
                         <ul class="py-2" aria-labelledby="user-menu-button">
                             <li>
