@@ -18,59 +18,14 @@
             </li>
 
             @if (auth()->user()->role === 'admin')
-                {{-- Admin Menu --}}
-                <li>
-                    <a href="{{ route('admin.users.index') }}"
-                        class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group {{ request()->routeIs('admin.users.*') ? 'bg-gray-100' : '' }}">
-                        <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-blue-600 {{ request()->routeIs('admin.users.*') ? 'text-blue-600' : '' }}"
-                            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                            viewBox="0 0 20 18">
-                            <path
-                                d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
-                        </svg>
-                        <span class="flex-1 ms-3 whitespace-nowrap">Users</span>
-                    </a>
-                </li>
+                {{-- Admin Menu - Manajemen User (dropdown) --}}
+                @php
+                    $userMenuOpen =
+                        request()->routeIs('admin.users.*') ||
+                        request()->routeIs('admin.dosen.*') ||
+                        request()->routeIs('admin.mahasiswa.*');
+                @endphp
 
-                <li>
-                    <a href="{{ route('admin.matakuliah.index') }}"
-                        class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group {{ request()->routeIs('admin.matakuliah.*') ? 'bg-gray-100' : '' }}">
-                        <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-blue-600 {{ request()->routeIs('admin.matakuliah.*') ? 'text-blue-600' : '' }}"
-                            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                            fill="currentColor" viewBox="0 0 24 24">
-                            <path fill-rule="evenodd"
-                                d="M6 2a2 2 0 0 0-2 2v15a3 3 0 0 0 3 3h12a1 1 0 1 0 0-2h-2v-2h2a1 1 0 0 0 1-1V4a2 2 0 0 0-2-2h-8v16h5v2H7a1 1 0 1 1 0-2h1V2H6Z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        <span class="flex-1 ms-3 whitespace-nowrap">Mata Kuliah</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.pengampu.index') }}"
-                        class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group {{ request()->routeIs('admin.pengampu.*') ? 'bg-gray-100' : '' }}">
-                        <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-blue-600 {{ request()->routeIs('admin.pengampu.*') ? 'text-blue-600' : '' }}"
-                            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                            fill="currentColor" viewBox="0 0 24 24">
-                            <path fill-rule="evenodd"
-                                d="M12 4a1 1 0 0 1 1 1v6h6a1 1 0 1 1 0 2h-6v6a1 1 0 1 1-2 0v-6H5a1 1 0 1 1 0-2h6V5a1 1 0 0 1 1-1Z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        <span class="flex-1 ms-3 whitespace-nowrap">Pengampu</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.ruang.index') }}"
-                        class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group {{ request()->routeIs('admin.ruang.*') ? 'bg-gray-100' : '' }}">
-                        <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-blue-600 {{ request()->routeIs('admin.ruang.*') ? 'text-blue-600' : '' }}"
-                            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                            fill="currentColor" viewBox="0 0 24 24">
-                            <path fill-rule="evenodd"
-                                d="M9 2.221V7H4.221a2 2 0 0 1 .365-.5L8.5 2.586A2 2 0 0 1 9 2.22ZM11 2v5a2 2 0 0 1-2 2H4v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-7Z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        <span class="flex-1 ms-3 whitespace-nowrap">Ruangan</span>
-                    </a>
-                </li>
                 <li>
                     <a href="{{ route('admin.golongan.index') }}"
                         class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group {{ request()->routeIs('admin.golongan.*') ? 'bg-gray-100' : '' }}">
@@ -87,6 +42,85 @@
                         <span class="flex-1 ms-3 whitespace-nowrap">Golongan</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('admin.ruang.index') }}"
+                        class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group {{ request()->routeIs('admin.ruang.*') ? 'bg-gray-100' : '' }}">
+                        <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-blue-600 {{ request()->routeIs('admin.ruang.*') ? 'text-blue-600' : '' }}"
+                            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd"
+                                d="M9 2.221V7H4.221a2 2 0 0 1 .365-.5L8.5 2.586A2 2 0 0 1 9 2.22ZM11 2v5a2 2 0 0 1-2 2H4v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-7Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="flex-1 ms-3 whitespace-nowrap">Ruangan</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.matakuliah.index') }}"
+                        class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group {{ request()->routeIs('admin.matakuliah.*') ? 'bg-gray-100' : '' }}">
+                        <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-blue-600 {{ request()->routeIs('admin.matakuliah.*') ? 'text-blue-600' : '' }}"
+                            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd"
+                                d="M6 2a2 2 0 0 0-2 2v15a3 3 0 0 0 3 3h12a1 1 0 1 0 0-2h-2v-2h2a1 1 0 0 0 1-1V4a2 2 0 0 0-2-2h-8v16h5v2H7a1 1 0 1 1 0-2h1V2H6Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="flex-1 ms-3 whitespace-nowrap">Mata Kuliah</span>
+                    </a>
+                </li>
+                <li>
+                    <button type="button" data-collapse-toggle="sidebar-manajemen-user"
+                        aria-expanded="{{ $userMenuOpen ? 'true' : 'false' }}"
+                        class="flex items-center w-full p-2 text-gray-900 rounded-lg hover:bg-gray-100 group {{ $userMenuOpen ? 'bg-gray-100' : '' }}">
+                        <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-blue-600 {{ $userMenuOpen ? 'text-blue-600' : '' }}"
+                            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                            viewBox="0 0 20 18">
+                            <path
+                                d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
+                        </svg>
+                        <span class="flex-1 ms-3 text-left whitespace-nowrap">Manajemen User</span>
+                        <svg class="w-3 h-3 ms-2 transition-transform {{ $userMenuOpen ? 'rotate-180' : '' }}"
+                            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m1 1 4 4 4-4" />
+                        </svg>
+                    </button>
+                    <ul id="sidebar-manajemen-user" class="{{ $userMenuOpen ? '' : 'hidden' }} py-2 space-y-1 ps-10">
+                        <li>
+                            <a href="{{ route('admin.users.index') }}"
+                                class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group {{ request()->routeIs('admin.users.*') ? 'bg-gray-100 text-blue-600' : '' }}">
+                                <span class="flex-1 ms-3 whitespace-nowrap">Users</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.dosen.index') }}"
+                                class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group {{ request()->routeIs('admin.dosen.*') ? 'bg-gray-100 text-blue-600' : '' }}">
+                                <span class="flex-1 ms-3 whitespace-nowrap">Dosen</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.mahasiswa.index') }}"
+                                class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group {{ request()->routeIs('admin.mahasiswa.*') ? 'bg-gray-100 text-blue-600' : '' }}">
+                                <span class="flex-1 ms-3 whitespace-nowrap">Mahasiswa</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="{{ route('admin.pengampu.index') }}"
+                        class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group {{ request()->routeIs('admin.pengampu.*') ? 'bg-gray-100' : '' }}">
+                        <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-blue-600 {{ request()->routeIs('admin.pengampu.*') ? 'text-blue-600' : '' }}"
+                            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd"
+                                d="M12 4a1 1 0 0 1 1 1v6h6a1 1 0 1 1 0 2h-6v6a1 1 0 1 1-2 0v-6H5a1 1 0 1 1 0-2h6V5a1 1 0 0 1 1-1Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="flex-1 ms-3 whitespace-nowrap">Pengampu</span>
+                    </a>
+                </li>
+
+
                 <li>
                     <a href="{{ route('admin.jadwal.index') }}"
                         class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group {{ request()->routeIs('admin.jadwal.*') ? 'bg-gray-100' : '' }}">

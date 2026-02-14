@@ -17,7 +17,7 @@ class PresensiController extends Controller
         $mahasiswa = Mahasiswa::where('user_id', Auth::id())->first();
 
         if (!$mahasiswa) {
-            return redirect()->route('login')->with('error', 'Data mahasiswa tidak ditemukan. Silakan hubungi administrator.');
+            return redirect()->route('mahasiswa.dashboard')->with('error', 'Data profil mahasiswa belum diisi. Silakan hubungi administrator.');
         }
 
         // Get all presensi records
@@ -103,7 +103,7 @@ class PresensiController extends Controller
         $mahasiswa = Mahasiswa::where('user_id', Auth::id())->first();
 
         if (!$mahasiswa) {
-            return redirect()->route('login')->with('error', 'Data mahasiswa tidak ditemukan. Silakan hubungi administrator.');
+            return redirect()->route('mahasiswa.dashboard')->with('error', 'Data profil mahasiswa belum diisi. Silakan hubungi administrator.');
         }
 
         // Get the schedule
@@ -161,7 +161,7 @@ class PresensiController extends Controller
         $mahasiswa = Mahasiswa::where('user_id', Auth::id())->first();
 
         if (!$mahasiswa) {
-            return redirect()->route('login')->with('error', 'Data mahasiswa tidak ditemukan.');
+            return redirect()->route('mahasiswa.dashboard')->with('error', 'Data profil mahasiswa belum diisi.');
         }
 
         $request->validate([

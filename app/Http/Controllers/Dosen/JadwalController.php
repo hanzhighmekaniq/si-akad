@@ -64,14 +64,17 @@ class JadwalController extends Controller
                 ->with('error', 'Anda tidak mengampu jadwal ini.');
         }
 
-        // Get students taking this course in this class
-        $mahasiswa = \App\Models\Krs::where('Kode_mk', $jadwal->Kode_mk)
-            ->whereHas('mahasiswa', function($query) use ($jadwal) {
-                $query->where('id_Gol', $jadwal->id_Gol);
+        // Daftar mahasiswa yang mengambil MK ini di golongan jadwal ini (untuk tampilan di view)
+        $mahasiswaList = \App\Models\Krs::where('Kode_mk', $jadwal->Kode_mk)
+            ->whereHas('mahasiswa', function ($q) use ($jadwal) {
+                $q->where('id_Gol', $jadwal->id_Gol);
             })
-            ->with('mahasiswa')
-            ->get();
+            ->with('mahasiswa.golongan')
+            ->get()
+            ->pluck('mahasiswa')
+            ->filter()
+            ->values();
 
-        return view('management.dosen.jadwal.show', compact('dosen', 'jadwal', 'mahasiswa'));
+        return view('management.dosen.jadwal.show', compact('dosen', 'jadwal', 'mahasiswaList'));
     }
 }

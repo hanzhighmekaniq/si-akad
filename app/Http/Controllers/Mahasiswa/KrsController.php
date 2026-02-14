@@ -14,7 +14,7 @@ class KrsController extends Controller
         $mahasiswa = Mahasiswa::where('user_id', Auth::id())->first();
 
         if (!$mahasiswa) {
-            return redirect()->route('login')->with('error', 'Data mahasiswa tidak ditemukan. Silakan hubungi administrator.');
+            return redirect()->route('mahasiswa.dashboard')->with('error', 'Data profil mahasiswa belum diisi. Silakan hubungi administrator.');
         }
 
         $krs = Krs::where('NIM', $mahasiswa->NIM)

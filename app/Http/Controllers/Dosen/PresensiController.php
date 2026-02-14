@@ -27,6 +27,8 @@ class PresensiController extends Controller
         // Get today's day name in Indonesian
         $today = Carbon::now();
         $hariIni = $this->getDayName($today->dayOfWeek);
+        $todayDate = $today->format('Y-m-d');
+        $nowTime = $today->format('H:i:s');
 
         // Get jadwal for today
         $jadwalHariIni = JadwalAkademik::whereHas('matakuliah.pengampu', function($query) use ($dosen) {
@@ -36,6 +38,20 @@ class PresensiController extends Controller
         ->with(['matakuliah', 'ruang', 'golongan'])
         ->orderBy('jam_mulai')
         ->get();
+
+        // Status presensi hari ini per jadwal: apakah untuk tanggal hari ini sudah ada input?
+        $presensiSudahInput = [];
+        foreach ($jadwalHariIni as $j) {
+            $presensiSudahInput[$j->id] = PresensiAkademik::where('Kode_mk', $j->Kode_mk)
+                ->where('hari', $j->hari)
+                ->where('tanggal', $todayDate)
+                ->exists();
+        }
+        // Jadwal hari ini yang jamnya sudah lewat (untuk penanda "jadwal lewat, presensi belum diinput")
+        $jadwalSudahLewat = [];
+        foreach ($jadwalHariIni as $j) {
+            $jadwalSudahLewat[$j->id] = $nowTime > $j->jam_selesai;
+        }
 
         // Get all jadwal (for other days)
         $semuaJadwal = JadwalAkademik::whereHas('matakuliah.pengampu', function($query) use ($dosen) {
@@ -47,7 +63,19 @@ class PresensiController extends Controller
         ->get()
         ->groupBy('hari');
 
-        return view('management.dosen.presensi.index', compact('dosen', 'jadwalHariIni', 'semuaJadwal', 'hariIni', 'today'));
+        // Untuk "semua jadwal": jika hari ini sama dengan hari jadwal, cek status presensi hari ini
+        $presensiSudahInputSemua = [];
+        foreach ($semuaJadwal->flatten() as $j) {
+            if ($j->hari === $hariIni) {
+                $presensiSudahInputSemua[$j->id] = PresensiAkademik::where('Kode_mk', $j->Kode_mk)
+                    ->where('hari', $j->hari)
+                    ->where('tanggal', $todayDate)
+                    ->exists();
+                $jadwalSudahLewat[$j->id] = $nowTime > $j->jam_selesai;
+            }
+        }
+
+        return view('management.dosen.presensi.index', compact('dosen', 'jadwalHariIni', 'semuaJadwal', 'hariIni', 'today', 'todayDate', 'presensiSudahInput', 'jadwalSudahLewat', 'presensiSudahInputSemua'));
     }
 
     /**
@@ -87,14 +115,15 @@ class PresensiController extends Controller
         // Get today's date
         $today = Carbon::now()->format('Y-m-d');
 
-        // Check if presensi already exists for today
-        $existingPresensi = PresensiAkademik::where('Kode_mk', $jadwal->Kode_mk)
+        // Check if presensi already exists for today (NIM => status_kehadiran untuk pre-fill)
+        $existingPresensiList = PresensiAkademik::where('Kode_mk', $jadwal->Kode_mk)
             ->where('hari', $jadwal->hari)
             ->where('tanggal', $today)
-            ->pluck('NIM')
-            ->toArray();
+            ->get();
+        $existingPresensi = $existingPresensiList->pluck('NIM')->toArray();
+        $existingPresensiDetail = $existingPresensiList->keyBy('NIM'); // NIM => PresensiAkademik (untuk status)
 
-        return view('management.dosen.presensi.create', compact('dosen', 'jadwal', 'mahasiswaList', 'today', 'existingPresensi'));
+        return view('management.dosen.presensi.create', compact('dosen', 'jadwal', 'mahasiswaList', 'today', 'existingPresensi', 'existingPresensiDetail'));
     }
 
     /**

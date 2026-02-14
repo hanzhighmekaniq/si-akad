@@ -10,8 +10,8 @@
                 </div>
                 <div class="flex-1 min-w-0">
                     <p class="text-sm font-semibold text-gray-900 truncate">{{ auth()->user()->name }}</p>
-                    <p class="text-xs text-gray-600 truncate">{{ auth()->user()->mahasiswa->NIM ?? 'Mahasiswa' }}</p>
-                    <p class="text-xs text-gray-500">{{ auth()->user()->mahasiswa->golongan->nama_Gol ?? '-' }}</p>
+                    <p class="text-xs text-gray-600 truncate">{{ auth()->user()->mahasiswa?->NIM ?? 'Mahasiswa' }}</p>
+                    <p class="text-xs text-gray-500">{{ auth()->user()->mahasiswa?->golongan?->nama_Gol ?? '-' }}</p>
                 </div>
             </div>
         </div>

@@ -105,9 +105,9 @@
                                 <span class="font-medium text-gray-900">{{ $r->nama_ruang }}</span>
                             </td>
                             <td class="px-6 py-4 text-center">
-                                @if($r->jadwalAkademik()->count() > 0)
+                                @if($r->jadwal_akademik_count > 0)
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                                        {{ $r->jadwalAkademik()->count() }} Jadwal
+                                        {{ $r->jadwal_akademik_count }} Jadwal
                                     </span>
                                 @else
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-800">
@@ -117,6 +117,11 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center justify-center gap-2">
+                                    <a href="{{ route('admin.ruang.show', $r->id_ruang) }}"
+                                        class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200"
+                                        title="Lihat detail & jadwal">
+                                        Lihat
+                                    </a>
                                     <a href="{{ route('admin.ruang.edit', $r->id_ruang) }}"
                                         class="font-medium text-blue-600 hover:text-blue-700"
                                         title="Edit">

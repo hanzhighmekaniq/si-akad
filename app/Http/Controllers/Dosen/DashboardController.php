@@ -15,18 +15,22 @@ class DashboardController extends Controller
         $dosen = Dosen::where('user_id', Auth::id())->first();
 
         if (!$dosen) {
-            return redirect()->route('login')->with('error', 'Data dosen tidak ditemukan. Silakan hubungi administrator.');
+            return view('management.dosen.dashboard', [
+                'dosen' => null,
+                'matakuliah' => collect(),
+                'jadwalMengajar' => collect(),
+            ]);
         }
 
         $matakuliah = Pengampu::where('NIP', $dosen->NIP)
             ->with('matakuliah')
             ->get();
 
-        $jadwalMengajar = JadwalAkademik::whereHas('matakuliah.pengampu', function($query) use ($dosen) {
+        $jadwalMengajar = JadwalAkademik::whereHas('matakuliah.pengampu', function ($query) use ($dosen) {
             $query->where('NIP', $dosen->NIP);
         })
-        ->with(['matakuliah', 'ruang', 'golongan'])
-        ->get();
+            ->with(['matakuliah', 'ruang', 'golongan'])
+            ->get();
 
         return view('management.dosen.dashboard', [
             'dosen' => $dosen,

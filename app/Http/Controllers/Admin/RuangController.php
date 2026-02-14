@@ -13,13 +13,12 @@ class RuangController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Ruang::query();
+        $query = Ruang::withCount('jadwalAkademik');
 
-        // Search by id_ruang or nama_ruang
         if ($request->has('search') && $request->search != '') {
-            $query->where(function($q) use ($request) {
+            $query->where(function ($q) use ($request) {
                 $q->where('id_ruang', 'like', '%' . $request->search . '%')
-                  ->orWhere('nama_ruang', 'like', '%' . $request->search . '%');
+                    ->orWhere('nama_ruang', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -57,11 +56,15 @@ class RuangController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Tampilkan detail ruangan dan jadwal yang menggunakan ruangan ini (relasi ke golongan & matakuliah).
      */
     public function show($id_ruang)
     {
-        $ruang = Ruang::findOrFail($id_ruang);
+        $ruang = Ruang::with(['jadwalAkademik' => function ($q) {
+            $q->orderBy('hari')->orderBy('jam_mulai')
+                ->with(['matakuliah', 'golongan']);
+        }])->findOrFail($id_ruang);
+
         return view('management.admin.ruang.show', compact('ruang'));
     }
 

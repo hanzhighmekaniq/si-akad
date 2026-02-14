@@ -9,6 +9,8 @@ use App\Http\Controllers\Admin\GolonganController;
 use App\Http\Controllers\Admin\MatakuliahController;
 use App\Http\Controllers\Admin\JadwalAkademikController;
 use App\Http\Controllers\Admin\PengampuController;
+use App\Http\Controllers\Admin\DosenController;
+use App\Http\Controllers\Admin\MahasiswaController;
 use App\Http\Controllers\Dosen\JadwalController as DosenJadwal;
 use App\Http\Controllers\Mahasiswa\KrsController as MahasiswaKrs;
 use App\Http\Controllers\Dosen\PresensiController as DosenPresensi;
@@ -31,6 +33,8 @@ Route::get('/', function () {
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
     Route::resource('users', UserController::class);
+    Route::resource('dosen', DosenController::class);
+    Route::resource('mahasiswa', MahasiswaController::class);
     Route::resource('matakuliah', MatakuliahController::class);
     Route::resource('jadwal', JadwalAkademikController::class);
     Route::resource('ruang', RuangController::class);

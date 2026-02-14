@@ -3,8 +3,15 @@
 
     <div class="mb-6">
         <h2 class="text-3xl font-bold text-gray-900">Dashboard Dosen</h2>
-        <p class="mt-1 text-sm text-gray-600">Selamat datang, {{ $dosen->Nama }}!</p>
-        <p class="text-xs text-gray-500">NIP: {{ $dosen->NIP }}</p>
+        @if($dosen)
+            <p class="mt-1 text-sm text-gray-600">Selamat datang, {{ $dosen->Nama }}!</p>
+            <p class="text-xs text-gray-500">NIP: {{ $dosen->NIP }}</p>
+        @else
+            <p class="mt-1 text-sm text-amber-700">Selamat datang, {{ auth()->user()->name }}!</p>
+            <div class="mt-2 p-4 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
+                <strong>Data profil dosen belum diisi.</strong> Akun Anda (role dosen) belum terhubung ke data dosen. Silakan hubungi administrator untuk mengisi data dosen (NIP, nama, dll.) agar fitur jadwal dan presensi dapat digunakan.
+            </div>
+        @endif
     </div>
 
     <!-- Stats Cards -->
@@ -63,7 +70,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Total Kelas</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ $jadwalMengajar->unique('id_Gol')->count() }}</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ $jadwalMengajar->count() > 0 ? $jadwalMengajar->unique('id_Gol')->count() : 0 }}</p>
                 </div>
             </div>
         </div>

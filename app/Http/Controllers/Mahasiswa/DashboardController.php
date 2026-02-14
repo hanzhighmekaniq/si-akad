@@ -16,7 +16,12 @@ class DashboardController extends Controller
         $mahasiswa = Mahasiswa::where('user_id', Auth::id())->first();
 
         if (!$mahasiswa) {
-            return redirect()->route('login')->with('error', 'Data mahasiswa tidak ditemukan. Silakan hubungi administrator.');
+            return view('management.mahasiswa.dashboard', [
+                'mahasiswa' => null,
+                'krs' => collect(),
+                'jadwalKuliah' => collect(),
+                'presensi' => collect(),
+            ]);
         }
 
         $krs = Krs::where('NIM', $mahasiswa->NIM)

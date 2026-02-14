@@ -1,6 +1,18 @@
 <x-mahasiswa-layout>
     <x-slot name="title">Dashboard - Student Portal</x-slot>
 
+    @if(session('error'))
+        <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">{{ session('error') }}</div>
+    @endif
+    @if(!$mahasiswa)
+        <div class="mb-8 p-6 bg-white rounded-lg shadow border border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Halo, {{ auth()->user()->name }}! 👋</h2>
+            <p class="text-gray-600 text-sm mb-3">Selamat datang di Student Portal</p>
+            <div class="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
+                <strong>Data profil mahasiswa belum diisi.</strong> Akun Anda (role mahasiswa) belum terhubung ke data mahasiswa (NIM, nama, golongan, dll.). Silakan hubungi administrator agar data Anda diisi, lalu fitur KRS, jadwal, dan presensi dapat digunakan.
+            </div>
+        </div>
+    @else
     <!-- Welcome Header -->
     <div class="mb-8 p-6 bg-white rounded-lg shadow border border-gray-200">
         <div class="flex items-center justify-between">
@@ -340,4 +352,5 @@
             </a>
         </div>
     </div>
+    @endif
 </x-mahasiswa-layout>

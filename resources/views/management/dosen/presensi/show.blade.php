@@ -214,10 +214,16 @@
                 @foreach ($presensiPerTanggal as $tanggal => $presensiList)
                     <div class="border border-gray-200 rounded-lg overflow-hidden">
                         <div class="bg-gray-50 px-4 py-3 border-b border-gray-200">
-                            <div class="flex items-center justify-between">
-                                <h4 class="font-semibold text-gray-900">
-                                    {{ \Carbon\Carbon::parse($tanggal)->format('d F Y') }}
-                                </h4>
+                            <div class="flex items-center justify-between flex-wrap gap-2">
+                                <div class="flex items-center gap-2">
+                                    <h4 class="font-semibold text-gray-900">
+                                        {{ \Carbon\Carbon::parse($tanggal)->format('d F Y') }}
+                                    </h4>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-800 border border-green-200">
+                                        <svg class="w-3.5 h-3.5 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                        Sudah diinput oleh dosen
+                                    </span>
+                                </div>
                                 <span class="text-sm text-gray-600">{{ $presensiList->count() }} Mahasiswa</span>
                             </div>
                         </div>

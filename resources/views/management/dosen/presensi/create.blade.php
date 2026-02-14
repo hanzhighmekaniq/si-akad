@@ -58,14 +58,24 @@
     </div>
 
     @if (count($existingPresensi) > 0)
-        <div class="mb-4 p-4 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg">
+        <div class="mb-4 p-4 bg-green-50 border border-green-200 text-green-800 rounded-lg">
             <div class="flex items-center">
-                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd"
-                        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                        clip-rule="evenodd" />
+                <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                 </svg>
-                <span class="font-medium">Presensi untuk tanggal ini sudah ada. Simpan ulang akan menimpa data sebelumnya.</span>
+                <div>
+                    <span class="font-semibold">Presensi untuk tanggal {{ \Carbon\Carbon::parse($today)->translatedFormat('d F Y') }} sudah pernah diinput.</span>
+                    <span class="block text-sm mt-0.5">Data di bawah sudah terisi dari input sebelumnya. Simpan ulang akan menimpa data yang ada.</span>
+                </div>
+            </div>
+        </div>
+    @else
+        <div class="mb-4 p-4 bg-blue-50 border border-blue-200 text-blue-800 rounded-lg">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                </svg>
+                <span><strong>Presensi belum diinput</strong> untuk tanggal ini. Pilih status kehadiran tiap mahasiswa lalu simpan.</span>
             </div>
         </div>
     @endif
@@ -130,10 +140,13 @@
                                         </div>
                                     </div>
                                 </div>
+                                @php
+                                    $statusMhs = isset($existingPresensiDetail[$mahasiswa->NIM]) ? $existingPresensiDetail[$mahasiswa->NIM]->status_kehadiran : null;
+                                @endphp
                                 <div class="flex gap-2">
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="radio" name="presensi[{{ $mahasiswa->NIM }}]" value="Hadir"
-                                            class="sr-only peer" required>
+                                            class="sr-only peer" required {{ $statusMhs === 'Hadir' ? 'checked' : '' }}>
                                         <span
                                             class="px-4 py-2 text-sm font-medium rounded-lg border-2 border-gray-200 peer-checked:border-green-500 peer-checked:bg-green-100 peer-checked:text-green-800 hover:bg-gray-50 transition">
                                             Hadir
@@ -141,7 +154,7 @@
                                     </label>
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="radio" name="presensi[{{ $mahasiswa->NIM }}]" value="Izin"
-                                            class="sr-only peer">
+                                            class="sr-only peer" {{ $statusMhs === 'Izin' ? 'checked' : '' }}>
                                         <span
                                             class="px-4 py-2 text-sm font-medium rounded-lg border-2 border-gray-200 peer-checked:border-blue-500 peer-checked:bg-blue-100 peer-checked:text-blue-800 hover:bg-gray-50 transition">
                                             Izin
@@ -149,7 +162,7 @@
                                     </label>
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="radio" name="presensi[{{ $mahasiswa->NIM }}]" value="Sakit"
-                                            class="sr-only peer">
+                                            class="sr-only peer" {{ $statusMhs === 'Sakit' ? 'checked' : '' }}>
                                         <span
                                             class="px-4 py-2 text-sm font-medium rounded-lg border-2 border-gray-200 peer-checked:border-yellow-500 peer-checked:bg-yellow-100 peer-checked:text-yellow-800 hover:bg-gray-50 transition">
                                             Sakit
@@ -157,7 +170,7 @@
                                     </label>
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="radio" name="presensi[{{ $mahasiswa->NIM }}]" value="Alpa"
-                                            class="sr-only peer">
+                                            class="sr-only peer" {{ $statusMhs === 'Alpa' ? 'checked' : '' }}>
                                         <span
                                             class="px-4 py-2 text-sm font-medium rounded-lg border-2 border-gray-200 peer-checked:border-red-500 peer-checked:bg-red-100 peer-checked:text-red-800 hover:bg-gray-50 transition">
                                             Alpa
