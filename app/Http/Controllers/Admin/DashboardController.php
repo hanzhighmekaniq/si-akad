@@ -17,7 +17,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        return view('admin.dashboard', [
+        return view('management.admin.dashboard', [
             'totalUsers' => User::count(),
             'totalMahasiswa' => Mahasiswa::count(),
             'totalDosen' => Dosen::count(),
