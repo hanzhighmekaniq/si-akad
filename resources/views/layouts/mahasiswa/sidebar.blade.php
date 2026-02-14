@@ -38,9 +38,9 @@
 
             <!-- Jadwal Kuliah -->
             <li>
-                <a href="#"
-                    class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-100 group">
-                    <svg class="w-5 h-5 text-gray-500 group-hover:text-blue-600"
+                <a href="{{ route('mahasiswa.jadwal.index') }}"
+                    class="flex items-center p-3 rounded-lg group {{ request()->routeIs('mahasiswa.jadwal.index') ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100' }}">
+                    <svg class="w-5 h-5 {{ request()->routeIs('mahasiswa.jadwal.index') ? 'text-white' : 'text-gray-500 group-hover:text-blue-600' }}"
                         fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd"
                             d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
@@ -52,9 +52,9 @@
 
             <!-- KRS -->
             <li>
-                <a href="#"
-                    class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-100 group">
-                    <svg class="w-5 h-5 text-gray-500 group-hover:text-blue-600"
+                <a href="{{ route('mahasiswa.krs.index') }}"
+                    class="flex items-center p-3 rounded-lg group {{ request()->routeIs('mahasiswa.krs.index') ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100' }}">
+                    <svg class="w-5 h-5 {{ request()->routeIs('mahasiswa.krs.index') ? 'text-white' : 'text-gray-500 group-hover:text-blue-600' }}"
                         fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd"
                             d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z"
@@ -66,15 +66,23 @@
 
             <!-- Presensi -->
             <li>
-                <a href="#"
-                    class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-100 group">
-                    <svg class="w-5 h-5 text-gray-500 group-hover:text-blue-600"
+                @php
+                    $pendingCount = \App\Http\Controllers\Mahasiswa\PresensiController::getPendingAttendanceCount();
+                @endphp
+                <a href="{{ route('mahasiswa.presensi.index') }}"
+                    class="flex items-center p-3 rounded-lg group {{ request()->routeIs('mahasiswa.presensi.index') ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100' }}">
+                    <svg class="w-5 h-5 {{ request()->routeIs('mahasiswa.presensi.index') ? 'text-white' : 'text-gray-500 group-hover:text-blue-600' }}"
                         fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd"
                             d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                             clip-rule="evenodd" />
                     </svg>
-                    <span class="ms-3">Presensi</span>
+                    <span class="flex-1 ms-3">Presensi</span>
+                    @if($pendingCount > 0)
+                        <span class="inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 rounded-full animate-pulse">
+                            {{ $pendingCount }}
+                        </span>
+                    @endif
                 </a>
             </li>
 

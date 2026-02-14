@@ -143,8 +143,8 @@
                                     {{ $loop->iteration }}
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="text-sm font-semibold text-gray-900">{{ $stat['mahasiswa']->nama_mhs }}</div>
-                                    <div class="text-xs text-gray-500">{{ $stat['mahasiswa']->NIM }}</div>
+                                    <div class="text-sm font-semibold text-gray-900">{{ $stat['mahasiswa']->Nama }}</div>
+                                    <div class="text-xs text-gray-500">NIM: {{ $stat['mahasiswa']->NIM }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-center">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-medium bg-green-100 text-green-800">

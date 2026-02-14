@@ -34,7 +34,7 @@ class MahasiswaSeeder extends Seeder
                 $data['user_id'] = $mahasiswaUsers[$i - 1]->id;
             }
 
-            Mahasiswa::create($data);
+            Mahasiswa::updateOrCreate(['NIM' => $data['NIM']], $data);
         }
     }
 }

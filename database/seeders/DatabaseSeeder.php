@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             JadwalAkademikSeeder::class,
             KrsSeeder::class,
             PresensiAkademikSeeder::class,
+            SetupTodayScheduleSeeder::class,
         ]);
     }
 }

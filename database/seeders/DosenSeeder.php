@@ -32,7 +32,7 @@ class DosenSeeder extends Seeder
             if (isset($dosenUsers[$index])) {
                 $dsn['user_id'] = $dosenUsers[$index]->id;
             }
-            Dosen::create($dsn);
+            Dosen::updateOrCreate(['NIP' => $dsn['NIP']], $dsn);
         }
     }
 }

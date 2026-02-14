@@ -16,12 +16,12 @@ class RoleMiddleware
     {
         // Kalau belum login
         if (!Auth::check()) {
-            return redirect()->route('login');
+            return redirect()->guest(route('login'));
         }
 
-        // Kalau role tidak sesuai
+        // Kalau role tidak sesuai, abort 403
         if (Auth::user()->role !== $role) {
-            abort(403, 'Unauthorized action.');
+            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
         }
 
         return $next($request);

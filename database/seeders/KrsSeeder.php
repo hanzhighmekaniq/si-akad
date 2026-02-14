@@ -17,18 +17,18 @@ class KrsSeeder extends Seeder
         $mahasiswas = Mahasiswa::all();
 
         foreach ($mahasiswas as $mhs) {
-            // Get jadwal for this mahasiswa's golongan
             $jadwals = JadwalAkademik::where('id_Gol', $mhs->id_Gol)->get();
-
-            // Each mahasiswa takes 4-6 matakuliah from their golongan's jadwal
+            if ($jadwals->isEmpty()) {
+                continue;
+            }
             $mkCount = min(rand(4, 6), $jadwals->count());
             $selectedJadwals = $jadwals->random($mkCount);
 
             foreach ($selectedJadwals as $jadwal) {
-                Krs::create([
-                    'NIM' => $mhs->NIM,
-                    'Kode_mk' => $jadwal->Kode_mk,
-                ]);
+                Krs::firstOrCreate(
+                    ['NIM' => $mhs->NIM, 'Kode_mk' => $jadwal->Kode_mk],
+                    ['NIM' => $mhs->NIM, 'Kode_mk' => $jadwal->Kode_mk]
+                );
             }
         }
     }

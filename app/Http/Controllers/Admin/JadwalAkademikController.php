@@ -66,12 +66,19 @@ class JadwalAkademikController extends Controller
     {
         $validated = $request->validate([
             'hari' => ['required', 'in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu'],
+            'jam_mulai' => ['required', 'date_format:H:i'],
+            'jam_selesai' => ['required', 'date_format:H:i', 'after:jam_mulai'],
             'Kode_mk' => ['required', 'exists:matakuliah,Kode_mk'],
             'id_ruang' => ['required', 'exists:ruang,id_ruang'],
             'id_Gol' => ['required', 'exists:golongan,id_Gol'],
         ], [
             'hari.required' => 'Hari wajib diisi',
             'hari.in' => 'Hari tidak valid',
+            'jam_mulai.required' => 'Jam mulai wajib diisi',
+            'jam_mulai.date_format' => 'Format jam mulai tidak valid',
+            'jam_selesai.required' => 'Jam selesai wajib diisi',
+            'jam_selesai.date_format' => 'Format jam selesai tidak valid',
+            'jam_selesai.after' => 'Jam selesai harus setelah jam mulai',
             'Kode_mk.required' => 'Mata kuliah wajib dipilih',
             'Kode_mk.exists' => 'Mata kuliah tidak ditemukan',
             'id_ruang.required' => 'Ruangan wajib dipilih',
@@ -80,14 +87,22 @@ class JadwalAkademikController extends Controller
             'id_Gol.exists' => 'Golongan tidak ditemukan',
         ]);
 
-        // Check for conflicts - same ruang, same hari
+        // Check for conflicts - same ruang, same hari, overlapping time
         $conflict = JadwalAkademik::where('hari', $validated['hari'])
             ->where('id_ruang', $validated['id_ruang'])
+            ->where(function($query) use ($validated) {
+                $query->whereBetween('jam_mulai', [$validated['jam_mulai'], $validated['jam_selesai']])
+                    ->orWhereBetween('jam_selesai', [$validated['jam_mulai'], $validated['jam_selesai']])
+                    ->orWhere(function($q) use ($validated) {
+                        $q->where('jam_mulai', '<=', $validated['jam_mulai'])
+                          ->where('jam_selesai', '>=', $validated['jam_selesai']);
+                    });
+            })
             ->exists();
 
         if ($conflict) {
             return back()->withInput()->withErrors([
-                'conflict' => 'Ruangan sudah digunakan pada hari yang sama!'
+                'conflict' => 'Ruangan sudah digunakan pada hari dan waktu yang sama!'
             ]);
         }
 
@@ -125,12 +140,19 @@ class JadwalAkademikController extends Controller
     {
         $validated = $request->validate([
             'hari' => ['required', 'in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu'],
+            'jam_mulai' => ['required', 'date_format:H:i'],
+            'jam_selesai' => ['required', 'date_format:H:i', 'after:jam_mulai'],
             'Kode_mk' => ['required', 'exists:matakuliah,Kode_mk'],
             'id_ruang' => ['required', 'exists:ruang,id_ruang'],
             'id_Gol' => ['required', 'exists:golongan,id_Gol'],
         ], [
             'hari.required' => 'Hari wajib diisi',
             'hari.in' => 'Hari tidak valid',
+            'jam_mulai.required' => 'Jam mulai wajib diisi',
+            'jam_mulai.date_format' => 'Format jam mulai tidak valid',
+            'jam_selesai.required' => 'Jam selesai wajib diisi',
+            'jam_selesai.date_format' => 'Format jam selesai tidak valid',
+            'jam_selesai.after' => 'Jam selesai harus setelah jam mulai',
             'Kode_mk.required' => 'Mata kuliah wajib dipilih',
             'Kode_mk.exists' => 'Mata kuliah tidak ditemukan',
             'id_ruang.required' => 'Ruangan wajib dipilih',
@@ -139,15 +161,23 @@ class JadwalAkademikController extends Controller
             'id_Gol.exists' => 'Golongan tidak ditemukan',
         ]);
 
-        // Check for conflicts - same ruang, same hari (excluding current jadwal)
+        // Check for conflicts - same ruang, same hari, overlapping time (excluding current jadwal)
         $conflict = JadwalAkademik::where('hari', $validated['hari'])
             ->where('id_ruang', $validated['id_ruang'])
             ->where('id', '!=', $jadwal->id)
+            ->where(function($query) use ($validated) {
+                $query->whereBetween('jam_mulai', [$validated['jam_mulai'], $validated['jam_selesai']])
+                    ->orWhereBetween('jam_selesai', [$validated['jam_mulai'], $validated['jam_selesai']])
+                    ->orWhere(function($q) use ($validated) {
+                        $q->where('jam_mulai', '<=', $validated['jam_mulai'])
+                          ->where('jam_selesai', '>=', $validated['jam_selesai']);
+                    });
+            })
             ->exists();
 
         if ($conflict) {
             return back()->withInput()->withErrors([
-                'conflict' => 'Ruangan sudah digunakan pada hari yang sama!'
+                'conflict' => 'Ruangan sudah digunakan pada hari dan waktu yang sama!'
             ]);
         }
 

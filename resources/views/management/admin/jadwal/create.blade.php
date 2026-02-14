@@ -73,6 +73,35 @@
                 @enderror
             </div>
 
+            <!-- Jam Kuliah -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Jam Mulai -->
+                <div>
+                    <label for="jam_mulai" class="block mb-2 text-sm font-medium text-gray-900">
+                        Jam Mulai <span class="text-red-600">*</span>
+                    </label>
+                    <input type="time" name="jam_mulai" id="jam_mulai" value="{{ old('jam_mulai') }}"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 @error('jam_mulai') border-red-500 @enderror"
+                        required>
+                    @error('jam_mulai')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Jam Selesai -->
+                <div>
+                    <label for="jam_selesai" class="block mb-2 text-sm font-medium text-gray-900">
+                        Jam Selesai <span class="text-red-600">*</span>
+                    </label>
+                    <input type="time" name="jam_selesai" id="jam_selesai" value="{{ old('jam_selesai') }}"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 @error('jam_selesai') border-red-500 @enderror"
+                        required>
+                    @error('jam_selesai')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Ruangan -->
                 <div>
@@ -121,14 +150,15 @@
                     <svg class="w-5 h-5 mr-2 mt-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                         viewBox="0 0 20 20">
                         <path
-                            d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                            d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1 a1 1 0 0 1 0 2Z" />
                     </svg>
                     <div>
                         <span class="font-medium">Informasi:</span>
                         <ul class="mt-1.5 list-disc list-inside">
-                            <li>Sistem akan mengecek konflik ruangan pada hari yang sama</li>
+                            <li>Sistem akan mengecek konflik ruangan pada hari dan waktu yang sama</li>
+                            <li>Ruangan tidak boleh digunakan pada jam yang bentrok/overlap</li>
                             <li>Pastikan mata kuliah sesuai dengan golongan yang dipilih</li>
-                            <li>Satu ruangan hanya bisa digunakan satu kali per hari</li>
+                            <li>Jam selesai harus lebih besar dari jam mulai</li>
                         </ul>
                     </div>
                 </div>

@@ -129,9 +129,14 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center justify-center gap-2">
+                                    <a href="{{ route('admin.golongan.show', $gol->id_Gol) }}"
+                                        class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200"
+                                        title="Kelola mahasiswa">
+                                        Lihat / Kelola
+                                    </a>
                                     <a href="{{ route('admin.golongan.edit', $gol->id_Gol) }}"
                                         class="font-medium text-blue-600 hover:text-blue-700"
-                                        title="Edit">
+                                        title="Edit golongan">
                                         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                                             fill="currentColor" viewBox="0 0 20 20">
                                             <path

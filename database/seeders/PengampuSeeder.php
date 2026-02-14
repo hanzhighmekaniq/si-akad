@@ -19,13 +19,13 @@ class PengampuSeeder extends Seeder
 
         // Assign each matakuliah to 1-2 dosen
         foreach ($matakuliahs as $mk) {
-            $randomDosens = $dosens->random(rand(1, 2));
-
+            $n = min(rand(1, 2), $dosens->count());
+            $randomDosens = $dosens->random($n);
             foreach ($randomDosens as $dosen) {
-                Pengampu::create([
-                    'Kode_mk' => $mk->Kode_mk,
-                    'NIP' => $dosen->NIP,
-                ]);
+                Pengampu::firstOrCreate(
+                    ['Kode_mk' => $mk->Kode_mk, 'NIP' => $dosen->NIP],
+                    ['Kode_mk' => $mk->Kode_mk, 'NIP' => $dosen->NIP]
+                );
             }
         }
     }

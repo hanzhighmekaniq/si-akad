@@ -21,7 +21,7 @@ class GolonganSeeder extends Seeder
         ];
 
         foreach ($golongan as $gol) {
-            Golongan::create($gol);
+            Golongan::firstOrCreate(['id_Gol' => $gol['id_Gol']], $gol);
         }
     }
 }

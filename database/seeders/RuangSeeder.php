@@ -23,7 +23,7 @@ class RuangSeeder extends Seeder
         ];
 
         foreach ($ruang as $r) {
-            Ruang::create($r);
+            Ruang::firstOrCreate(['id_ruang' => $r['id_ruang']], $r);
         }
     }
 }

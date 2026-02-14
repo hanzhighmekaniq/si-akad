@@ -125,8 +125,8 @@
                                             {{ $index + 1 }}
                                         </span>
                                         <div>
-                                            <p class="text-sm font-semibold text-gray-900">{{ $mahasiswa->nama_mhs }}</p>
-                                            <p class="text-xs text-gray-500">{{ $mahasiswa->NIM }}</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ $mahasiswa->Nama }}</p>
+                                            <p class="text-xs text-gray-500">NIM: {{ $mahasiswa->NIM }}</p>
                                         </div>
                                     </div>
                                 </div>

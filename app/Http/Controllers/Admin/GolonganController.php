@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Golongan;
+use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 
 class GolonganController extends Controller
@@ -15,11 +16,10 @@ class GolonganController extends Controller
     {
         $query = Golongan::withCount(['mahasiswa', 'jadwalAkademik']);
 
-        // Search by id_Gol or nama_Gol
         if ($request->has('search') && $request->search != '') {
-            $query->where(function($q) use ($request) {
+            $query->where(function ($q) use ($request) {
                 $q->where('id_Gol', 'like', '%' . $request->search . '%')
-                  ->orWhere('nama_Gol', 'like', '%' . $request->search . '%');
+                    ->orWhere('nama_Gol', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -57,12 +57,70 @@ class GolonganController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Tampilkan detail golongan (kelas) dan daftar mahasiswa di dalamnya.
      */
-    public function show($id_Gol)
+    public function show(Golongan $golongan)
     {
-        $golongan = Golongan::withCount(['mahasiswa', 'jadwalAkademik'])->findOrFail($id_Gol);
-        return view('management.admin.golongan.show', compact('golongan'));
+        $golongan->load(['mahasiswa' => fn ($q) => $q->orderBy('NIM')]);
+        $golongan->loadCount('jadwalAkademik');
+
+        $mahasiswaLain = Mahasiswa::where('id_Gol', '!=', $golongan->id_Gol)
+            ->orderBy('Nama')
+            ->get();
+
+        $golonganLain = Golongan::where('id_Gol', '!=', $golongan->id_Gol)->orderBy('nama_Gol')->get();
+
+        return view('management.admin.golongan.show', compact('golongan', 'mahasiswaLain', 'golonganLain'));
+    }
+
+    /**
+     * Tambah mahasiswa ke golongan ini.
+     */
+    public function addMahasiswa(Request $request, Golongan $golongan)
+    {
+        $validated = $request->validate([
+            'NIM' => ['required', 'array', 'min:1'],
+            'NIM.*' => ['required', 'string', 'exists:mahasiswa,NIM'],
+        ], [
+            'NIM.required' => 'Pilih minimal satu mahasiswa.',
+        ]);
+
+        $count = 0;
+        foreach ($validated['NIM'] as $nim) {
+            $m = Mahasiswa::find($nim);
+            if ($m && $m->id_Gol !== $golongan->id_Gol) {
+                $m->update(['id_Gol' => $golongan->id_Gol]);
+                $count++;
+            }
+        }
+
+        $msg = $count > 0
+            ? "{$count} mahasiswa berhasil ditambahkan ke golongan {$golongan->nama_Gol}."
+            : "Tidak ada mahasiswa baru yang ditambahkan (mungkin sudah ada di golongan ini).";
+        return redirect()->route('admin.golongan.show', $golongan->id_Gol)->with('success', $msg);
+    }
+
+    /**
+     * Pindahkan satu mahasiswa ke golongan lain.
+     */
+    public function pindahkanMahasiswa(Request $request, Golongan $golongan)
+    {
+        $validated = $request->validate([
+            'NIM' => ['required', 'string', 'exists:mahasiswa,NIM'],
+            'id_Gol_tujuan' => ['required', 'string', 'exists:golongan,id_Gol'],
+        ]);
+
+        $mhs = Mahasiswa::findOrFail($validated['NIM']);
+        if ($mhs->id_Gol !== $golongan->id_Gol) {
+            return redirect()->route('admin.golongan.show', $golongan->id_Gol)
+                ->with('error', 'Mahasiswa tidak berada di golongan ini.');
+        }
+
+        $mhs->update(['id_Gol' => $validated['id_Gol_tujuan']]);
+        $tujuan = Golongan::find($validated['id_Gol_tujuan']);
+
+        return redirect()->route('admin.golongan.show', $golongan->id_Gol)
+            ->with('success', "{$mhs->Nama} dipindahkan ke {$tujuan->nama_Gol}.");
     }
 
     /**

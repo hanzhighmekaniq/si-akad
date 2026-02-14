@@ -36,18 +36,27 @@ class JadwalAkademikSeeder extends Seeder
             $mkCount = rand(5, 8);
             $availableMk = $matakuliahs->shuffle();
 
+            $availableMk = $availableMk->values();
             for ($i = 0; $i < $mkCount && $i < $availableMk->count(); $i++) {
                 $mk = $availableMk[$i];
                 $timeSlot = $timeSlots[array_rand($timeSlots)];
+                $hari = $hariList[array_rand($hariList)];
 
-                JadwalAkademik::create([
-                    'hari' => $hariList[array_rand($hariList)],
-                    'jam_mulai' => $timeSlot[0],
-                    'jam_selesai' => $timeSlot[1],
-                    'Kode_mk' => $mk->Kode_mk,
-                    'id_ruang' => $ruangs->random()->id_ruang,
-                    'id_Gol' => $gol->id_Gol,
-                ]);
+                JadwalAkademik::firstOrCreate(
+                    [
+                        'Kode_mk' => $mk->Kode_mk,
+                        'id_Gol' => $gol->id_Gol,
+                        'hari' => $hari,
+                    ],
+                    [
+                        'hari' => $hari,
+                        'jam_mulai' => $timeSlot[0],
+                        'jam_selesai' => $timeSlot[1],
+                        'Kode_mk' => $mk->Kode_mk,
+                        'id_ruang' => $ruangs->random()->id_ruang,
+                        'id_Gol' => $gol->id_Gol,
+                    ]
+                );
             }
         }
     }

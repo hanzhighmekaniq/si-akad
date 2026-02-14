@@ -73,13 +73,16 @@ class PresensiController extends Controller
                 ->with('error', 'Anda tidak memiliki akses ke jadwal ini.');
         }
 
-        // Get mahasiswa list from KRS
+        // Get mahasiswa list from KRS (only from this golongan)
         $mahasiswaList = Krs::where('Kode_mk', $jadwal->Kode_mk)
-            ->where('id_Gol', $jadwal->id_Gol)
+            ->whereHas('mahasiswa', function($query) use ($jadwal) {
+                $query->where('id_Gol', $jadwal->id_Gol);
+            })
             ->with('mahasiswa')
             ->get()
             ->pluck('mahasiswa')
-            ->filter();
+            ->filter()
+            ->sortBy('NIM');
 
         // Get today's date
         $today = Carbon::now()->format('Y-m-d');
@@ -180,13 +183,16 @@ class PresensiController extends Controller
         // Group by tanggal
         $presensiPerTanggal = $presensiList->groupBy('tanggal');
 
-        // Get mahasiswa list from KRS
+        // Get mahasiswa list from KRS (only from this golongan)
         $mahasiswaList = Krs::where('Kode_mk', $jadwal->Kode_mk)
-            ->where('id_Gol', $jadwal->id_Gol)
+            ->whereHas('mahasiswa', function($query) use ($jadwal) {
+                $query->where('id_Gol', $jadwal->id_Gol);
+            })
             ->with('mahasiswa')
             ->get()
             ->pluck('mahasiswa')
-            ->filter();
+            ->filter()
+            ->sortBy('NIM');
 
         // Calculate statistics per mahasiswa
         $statistik = [];
